@@ -1,13 +1,14 @@
 package main
 
 import (
+	"armeris/gorest/routers"
 	"log"
 	"net/http"
 )
 
 func main() {
 
-	router := NewRouter()
+	router := routers.NewRouter()
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
