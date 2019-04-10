@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"armeris/gorest/controllers"
 	"net/http"
 	"os"
 	"github.com/gorilla/mux"
@@ -16,11 +17,20 @@ func NewRouter() *mux.Router {
 		handler = route.HandlerFunc
 		handler = handlers.LoggingHandler(os.Stdout, handler)
 
-		router.
-			Methods(route.Method).
-			Path(route.Pattern).
-			Name(route.Name).
-			Handler(handler)
+		if(route.Name != "GetToken") {
+			router.
+				Methods(route.Method).
+				Path(route.Pattern).
+				Name(route.Name).
+				Handler(controllers.JwtMiddleware.Handler(handler))
+		}else{
+			router.
+				Methods(route.Method).
+				Path(route.Pattern).
+				Name(route.Name).
+				Handler(handler)
+
+		}
 	}
 
 	router.Handle("/",handlers.LoggingHandler(os.Stdout, http.FileServer(http.Dir("./views/"))))
@@ -28,3 +38,4 @@ func NewRouter() *mux.Router {
 
 	return router
 }
+

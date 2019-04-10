@@ -8,9 +8,36 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/auth0/go-jwt-middleware"
 )
+
+var mySigningKey = []byte("secret")
+
+var JwtMiddleware = jwtmiddleware.New(jwtmiddleware.Options{
+	ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
+		return mySigningKey, nil
+	},
+	SigningMethod: jwt.SigningMethodHS256,
+})
+
+
+func GetTokenHandler(w http.ResponseWriter, r *http.Request) {
+	token := jwt.New(jwt.SigningMethodHS256)
+
+	claims := token.Claims.(jwt.MapClaims)
+
+	claims["admin"] = true
+	claims["name"] = "Rubén"
+	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+
+	tokenString, _ := token.SignedString(mySigningKey)
+
+	w.Write([]byte(tokenString))
+}
 
 func TodoIndex(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json, charset=UTF-8")

@@ -16,6 +16,12 @@ type Routes []Route
 
 var routes = Routes{
 	Route{
+		"GetToken",
+		"GET",
+		"/get-token",
+		controllers.GetTokenHandler,
+	},
+	Route{
 		"TodoIndex",
 		"GET",
 		"/todos",
